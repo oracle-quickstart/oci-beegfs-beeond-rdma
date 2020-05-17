@@ -1,5 +1,5 @@
 # oci-beegfs-beeond
-Deploy BeeGFS BeeOND (BeeGFS ON Demand) on Oracle Cloud Infrastructure HPC Clustered Network. The template will do the following: 
+Deploy BeeGFS BeeOND (BeeGFS ON Demand) on Oracle Cloud Infrastructure HPC 100Gbps RDMA Clustered Network. The template will do the following: 
 
 - Provision a private clustered network using HPC baremeta nodes and 100 Gbps RDMA.  Use this template to deploy BeeGFS BeeOND on HPC nodes with clustered networking.   
 - Create a BeeGFS BeeOND parallel filesystem using all the nodes in the cluster by leveraging the local NVMe SSD on each HPC node to create a single filesystem namespace.
@@ -11,7 +11,8 @@ Deploy BeeGFS BeeOND (BeeGFS ON Demand) on Oracle Cloud Infrastructure HPC Clust
 
 
 ## High Level Architecture
-###  Using RDMA network: The filesystem is designed to use 100Gbps RDMA for filesystem traffic along with your HPC application traffic.
+###  Using RDMA network: 
+The filesystem is designed to use 100Gbps RDMA for filesystem traffic along with your HPC application traffic.
 ![](./images/BeeOND_RDMA_OCI_High_Level_Arch.png)
 
 ####  RDMA network and mount point:
@@ -20,7 +21,8 @@ Deploy BeeGFS BeeOND (BeeGFS ON Demand) on Oracle Cloud Infrastructure HPC Clust
 
 
 
-###  Using TCP network: The filesystem is designed to use 25Gbps TCP network for filesystem traffic, while the 100Gbps RDMA is used for HPC application traffic.    Set use_beegfs_over_rdma to false in terraform.tfvars or variables.tf file.   
+###  Using TCP network: 
+The filesystem is designed to use 25Gbps TCP network for filesystem traffic, while the 100Gbps RDMA is used for HPC application traffic.    Set ** use_beegfs_over_rdma to false ** in terraform.tfvars or variables.tf file.   
 ![](./images/BeeOND_TCP_OCI_High_Level_Arch.png)
 
 ####  TCP (25Gbps) network and mount point:
@@ -39,7 +41,7 @@ Now, you'll want a local copy of this repo.  You can make that with the commands
     ls
 
 ## Customize the template 
-Create a terraform.tfvars file and set values as per your needs.  We recommend to use terraform.tfvars to override values in variables.tf file.   Update values based on your AD,  # of nodes in a cluster, etc.    By default,  use_beegfs_over_rdma is set to true in variables.tf, so RDMA network will be used for BeeOND filesystem traffic.  
+Create a terraform.tfvars file and set values as per your needs.  We recommend to use terraform.tfvars to override values in variables.tf file.   Update values based on your AD,  # of nodes in a cluster, etc.    By default,  ** use_beegfs_over_rdma is set to true ** in variables.tf, so RDMA network will be used for BeeOND filesystem traffic.  
 
 
            cat terraform.tfvars
