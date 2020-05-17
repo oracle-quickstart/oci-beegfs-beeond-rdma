@@ -1,0 +1,50 @@
+- hosts: compute
+  tasks:
+  - name: Repository
+    become: true
+    yum_repository:
+      name: BEEGFS-REPO
+      description: BEEGFS-REPO
+      baseurl: https://www.beegfs.io/release/beegfs_7_1/dists/rhel7
+      gpgcheck: no
+  - name: install beeond
+    become: true
+    yum:
+      name:
+        - beeond
+  - name: install rdma packages
+    become: true
+    yum:
+      name:
+        - libbeegfs-ib
+    when: use_beegfs_over_rdma|bool
+  - name: create nodefile
+    template:
+      src: _nodefile.j2
+      dest: /home/opc/nodefile
+  - name: create nodefile.rdma
+    template:
+      src: _nodefile.rdma.j2
+      dest: /home/opc/nodefile.rdma
+    when: use_beegfs_over_rdma|bool
+  - name: create passwordless_ssh.sh file
+    template:
+      src: _passwordless_ssh.sh.j2
+      dest: /home/opc/passwordless_ssh.sh
+  - name: execute passwordless_ssh.sh
+    command: bash -c "chmod +x /home/opc/*.sh ; sudo /home/opc/passwordless_ssh.sh"
+  - name: create client_rebuild_prep.sh file
+    template:
+      src: _client_rebuild_prep.sh.j2
+      dest: /home/opc/client_rebuild_prep.sh
+  - name: execute client_rebuild_prep.sh
+    command: bash -c "chmod +x /home/opc/*.sh ; sudo /home/opc/client_rebuild_prep.sh"
+  - name: "Deploy BeeOND script on first compute node only using RDMA"
+    command: bash -c "sudo beeond start -n /home/opc/nodefile.rdma -d /mnt/localdisk -c /mnt/beeond -F "
+    run_once: true
+    when: use_beegfs_over_rdma|bool
+  - name: "Deploy BeeOND script on first compute node only using TCP"
+    command: bash -c "sudo beeond start -n /home/opc/nodefile -d /mnt/localdisk -c /mnt/beeond -F "
+    run_once: true
+    when: not use_beegfs_over_rdma|bool
+

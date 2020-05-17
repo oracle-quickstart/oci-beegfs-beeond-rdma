@@ -1,0 +1,4 @@
+{% for item in groups['compute'] %}
+{{ hostvars[inventory_hostname]['rdma_network'] | ipmath(loop.index) }}
+{% endfor %}
+
