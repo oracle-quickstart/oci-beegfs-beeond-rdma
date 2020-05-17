@@ -8,6 +8,7 @@ Deploy BeeGFS BeeOND (BeeGFS ON Demand) on Oracle Cloud Infrastructure HPC 100Gb
 
 ## What is BeeGFS BeeOND (ON-Demand)
 ![](./images/What_is_BeeOND.png)
+*Quoted from https://www.beegfs.io/wiki/BeeOND#whatis
 
 
 ## High Level Architecture
