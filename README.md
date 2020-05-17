@@ -1,4 +1,4 @@
-# oci-beegfs-beeond
+# oci-beegfs-beeond-rdma
 Deploy BeeGFS BeeOND (BeeGFS ON Demand) on Oracle Cloud Infrastructure HPC 100Gbps RDMA Clustered Network. The template will do the following: 
 
 - Provision a private clustered network using HPC baremeta nodes and 100 Gbps RDMA.  Use this template to deploy BeeGFS BeeOND on HPC nodes with clustered networking.   
