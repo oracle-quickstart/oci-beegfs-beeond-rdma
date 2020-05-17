@@ -27,8 +27,8 @@ The filesystem is designed to use 25Gbps TCP network for filesystem traffic, whi
 ![](./images/BeeOND_TCP_OCI_High_Level_Arch.png)
 
 ####  TCP (25Gbps) network and mount point:
-![](./images/Output-03.png)
 ![](./images/Output-04.png)
+![](./images/Output-03.png)
 
 
 ## Prerequisites
