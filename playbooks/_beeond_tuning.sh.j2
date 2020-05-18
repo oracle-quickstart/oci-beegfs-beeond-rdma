@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -x
+
+if [ "{{ use_beegfs_over_rdma }}" = "true" ]; then
+  sed -i 's/tuneBindToNumaZone.*=/tuneBindToNumaZone           = 0/g'  /etc/beegfs/beegfs-storage.conf
+  sed -i 's/connRDMABufSize.*= 8192/connRDMABufSize               = 32768/g'  /etc/beegfs/beegfs-client.conf
+fi
+
+# common tuning - irrespective of RDMA or TCP
+sed -i 's/connMaxInternodeNum.*= 12/connMaxInternodeNum          = 64/g'  /etc/beegfs/beegfs-client.conf
+sed -i 's/tuneNumWorkers.*= 12/tuneNumWorkers               = 24/g'  /etc/beegfs/beegfs-storage.conf
+
+

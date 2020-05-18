@@ -39,6 +39,12 @@
       dest: /home/opc/client_rebuild_prep.sh
   - name: execute client_rebuild_prep.sh
     command: bash -c "chmod +x /home/opc/*.sh ; sudo /home/opc/client_rebuild_prep.sh"
+  - name: create beeond_tuning.sh file
+    template:
+      src: _beeond_tuning.sh.j2
+      dest: /home/opc/beeond_tuning.sh
+  - name: execute beeond_tuning.sh
+    command: bash -c "chmod +x /home/opc/*.sh ; sudo /home/opc/beeond_tuning.sh"
   - name: "Deploy BeeOND script on first compute node only using RDMA"
     command: bash -c "sudo beeond start -n /home/opc/nodefile.rdma -d /mnt/localdisk -c /mnt/beeond -F "
     run_once: true
