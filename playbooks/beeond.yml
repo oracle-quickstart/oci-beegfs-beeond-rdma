@@ -12,16 +12,18 @@
     yum:
       name:
         - beeond
+      lock_timeout: 180
   - name: install rdma packages
     become: true
     yum:
       name:
         - libbeegfs-ib
+      lock_timeout: 180
     when: use_beegfs_over_rdma|bool
-  - name: create nodefile
+  - name: create nodefile.tcp
     template:
-      src: _nodefile.j2
-      dest: /home/opc/nodefile
+      src: _nodefile.tcp.j2
+      dest: /home/opc/nodefile.tcp
   - name: create nodefile.rdma
     template:
       src: _nodefile.rdma.j2
@@ -45,12 +47,13 @@
       dest: /home/opc/beeond_tuning.sh
   - name: execute beeond_tuning.sh
     command: bash -c "chmod +x /home/opc/*.sh ; sudo /home/opc/beeond_tuning.sh"
-  - name: "Deploy BeeOND script on first compute node only using RDMA"
-    command: bash -c "sudo beeond start -n /home/opc/nodefile.rdma -d /mnt/localdisk -c /mnt/beeond -F "
+  - name: create beeond.sh file
+    template:
+      src: _beeond.sh.j2
+      dest: /home/opc/beeond.sh
+  - name: Clean-up any previous failed attempt files - /var/tmp/beeond.tmp on all nodes
+    command: bash -c "sudo rm -rf /var/tmp/beeond.tmp "
+  - name: Run BeeOND script on first compute node only
+    command: bash -c "chmod +x /home/opc/*.sh ; sudo /home/opc/beeond.sh "
     run_once: true
-    when: use_beegfs_over_rdma|bool
-  - name: "Deploy BeeOND script on first compute node only using TCP"
-    command: bash -c "sudo beeond start -n /home/opc/nodefile -d /mnt/localdisk -c /mnt/beeond -F "
-    run_once: true
-    when: not use_beegfs_over_rdma|bool
 

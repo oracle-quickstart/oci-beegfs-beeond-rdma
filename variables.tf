@@ -73,6 +73,22 @@ variable "use_beegfs_over_rdma" {
   default = true
 }
 
+# Number of Metadata servers to start (Default: 1) in the FS cluster of var.node_count
+# If you want to override, set this to a value between 1 and var.node_count
+# DO NOT SET THIS VALUE to 0
+variable "metadata_node_count" {
+  default = 1
+}
+
+# Number of Storage servers to start (Default: number of hosts) in the FS cluster of var.node_count
+# A non-zero value will be ignored and beegfs storage server will be started on each node of the cluster
+# If you want to override, set this to a value between 1 and var.node_count
+# DO NOT SET THIS VALUE to 0
+variable "storage_node_count" {
+  default = -1
+}
+
+
 
 variable "bastion_shape" {
   default = "VM.Standard2.1"

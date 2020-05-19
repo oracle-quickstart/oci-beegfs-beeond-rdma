@@ -1,0 +1,34 @@
+#!/bin/bash
+
+set -x
+
+command_start="sudo beeond start "
+
+if [ "{{ metadata_node_count }}" = "1" ]; then
+  echo "use default 1 metadata, no need to pass -m parameter"
+  metadata_parameter=""
+else
+  metadata_parameter=" -m {{ metadata_node_count }} "
+fi
+
+if [ "{{ storage_node_count }}" = "-1" ]; then
+  echo "use default all nodes for storage, no need to pass -s parameter"
+  storage_parameter=""
+else
+  storage_parameter=" -s {{ storage_node_count }} "
+fi
+
+
+
+if [ "{{ use_beegfs_over_rdma }}" = "true" ]; then
+  nodefile_parameter=" -n {{ nodefile_rdma }} "
+else
+  nodefile_parameter=" -n {{ nodefile_tcp }} "
+fi
+
+
+$command_start $nodefile_parameter $metadata_parameter $storage_parameter -d {{ nvme_path }} -c {{ beeond_mount }} -F
+
+#sudo beeond start -n /home/opc/nodefile -d /mnt/localdisk -c /mnt/beeond -F
+
+

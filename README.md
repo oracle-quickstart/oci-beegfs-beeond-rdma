@@ -3,6 +3,7 @@ Deploy BeeGFS BeeOND (BeeGFS ON Demand) on Oracle Cloud Infrastructure HPC 100Gb
 
 - Provision a private clustered network using HPC baremeta nodes and 100 Gbps RDMA.  Use this template to deploy BeeGFS BeeOND on HPC nodes with clustered networking.   
 - Create a BeeGFS BeeOND parallel filesystem using all the nodes in the cluster by leveraging the local NVMe SSD on each HPC node to create a single filesystem namespace.
+- By default, all nodes will have a BeeGFS BeeOND Storage service & BeeOND client service running.  The first node, will also run Management and Metadata service, in addition to storage and client service.   You can override the default behavior using Terraform variables, see below [Customize-the-template](https://github.com/oracle-quickstart/oci-beegfs-beeond-rdma#customize-the-template) section. 
 - By default, the filesystem is designed to use 100Gbps RDMA for filesystem traffic along with your HPC application traffic.  If we want to use 100Gbps RDMA only for your compute application traffic, then you can configure BeeOND to use 25Gbps network on the HPC nodes.      
 
 
@@ -48,12 +49,18 @@ Create a terraform.tfvars file and set values as per your needs.  We recommend t
            cat terraform.tfvars
            ad="kWVD:UK-LONDON-1-AD-1"
            bastion_ad="kWVD:UK-LONDON-1-AD-1"
-           node_count="2"
+           node_count=3
            boot_volume_size="100"
            use_existing_vcn=false
            use_custom_name=false
            use_marketplace_image=true
            use_standard_image=true
+           metadata_node_count=2
+           storage_node_count=2
+           
+In above example,  on a 3 node (**node_count=3**) BeeOND cluster, I am asking for 2 Metadata servers (**metadata_node_count=2**) instead of default of 1.  Also I am asking for only 2 Storage servers (**storage_node_count=2**) instead of the default of creating Storage servers on all nodes of the BeeOND cluster (In this example: 3)
+
+
 
 ## Deployment and Post Deployment
 Deploy using standard Terraform commands
