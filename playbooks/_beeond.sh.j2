@@ -27,7 +27,7 @@ else
 fi
 
 
-$command_start $nodefile_parameter $metadata_parameter $storage_parameter -d {{ nvme_path }} -c {{ beeond_mount }} -F
+$command_start $nodefile_parameter $metadata_parameter $storage_parameter -d {{ nvme_path }} -c {{ beeond_mount }} -F -f /etc/beegfs/tuning
 
 #sudo beeond start -n /home/opc/nodefile -d /mnt/localdisk -c /mnt/beeond -F
 

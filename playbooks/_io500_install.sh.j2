@@ -1,0 +1,53 @@
+#!/bin/bash
+
+set -x
+
+# Installs all required packages.
+install_pkgs()
+{
+  sleep 90s
+  yum install -y -q git
+  yum install -y autoconf automake
+  # node monitoring tools
+  yum install sysstat -y
+  yum install nmon -y
+}
+
+install_io500()
+{
+source /etc/opt/oci-hpc/bashrc/.bashrc_openmpi3
+#cd /root
+cd $filesystem_root
+git clone https://github.com/VI4IO/io500-app.git -b io500-isc20
+cd io500-app
+./prepare.sh
+
+# Setup the environment variables. Append following lines to ~/.bash_profile
+echo 'source /etc/opt/oci-hpc/bashrc/.bashrc_openmpi3' >> /root/.bash_profile
+source /root/.bash_profile
+
+# on all nodes
+#ssh <other nodes "mkdir -p /mnt/beeond/io500-app/build/pfind/"
+#scp /mnt/beeond/io500-app/build/pfind/pfind <>:/mnt/beeond/io500-app/build/pfind/
+}
+
+filesystem_root={{ beeond_mount }}
+
+if [ -d "$filesystem_root" ]; then
+install_pkgs
+install_io500
+
+for line in `cat /etc/opt/oci-hpc/hostfile.rdma` ; do echo "$line slots=36" >> $filesystem_root/hostsfile.cn ; done ; cat $filesystem_root/hostsfile.cn
+
+mv $filesystem_root/io500-app/io500.sh $filesystem_root/io500-app/io500.sh.orig
+cp /home/opc/io500.sh $filesystem_root/io500-app/
+cp /home/opc/config-test3.ini $filesystem_root/io500-app/
+
+else
+ echo "filesystem directory not found"
+ exit 1
+fi
+
+
+
+

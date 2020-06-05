@@ -127,6 +127,10 @@ variable "use_marketplace_image" {
   default = 1
 }
 
+locals {
+  image_id  = (var.use_marketplace_image ? local.mp_listing_resource_id : var.image)
+}
+
 variable "use_standard_image" { 
   default = 1
 } 
