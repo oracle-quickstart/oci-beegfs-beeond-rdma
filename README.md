@@ -57,6 +57,7 @@ Create a terraform.tfvars file and set values as per your needs.  We recommend t
            use_standard_image=true
            metadata_node_count=2
            storage_node_count=2
+           io500=false
            
 In above example,  on a 3 node (**node_count=3**) BeeOND cluster, I am asking for 2 Metadata servers (**metadata_node_count=2**) instead of default of 1.  Also I am asking for only 2 Storage servers (**storage_node_count=2**) instead of the default of creating Storage servers on all nodes of the BeeOND cluster (In this example: 3)
 
