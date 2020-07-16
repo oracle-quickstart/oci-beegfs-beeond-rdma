@@ -15,8 +15,13 @@ install_pkgs()
 
 install_io500()
 {
+# for OL75+OFED44 image
 source /etc/opt/oci-hpc/bashrc/.bashrc_openmpi3
+# for OL77+OFED44 image
+source /etc/opt/oci-hpc/bashrc/.bashrc_openmpi
+
 #cd /root
+# -b io500-isc20_v3
 cd $filesystem_root
 git clone https://github.com/VI4IO/io500-app.git -b io500-isc20
 cd io500-app
@@ -24,11 +29,9 @@ cd io500-app
 
 # Setup the environment variables. Append following lines to ~/.bash_profile
 echo 'source /etc/opt/oci-hpc/bashrc/.bashrc_openmpi3' >> /root/.bash_profile
+echo 'source /etc/opt/oci-hpc/bashrc/.bashrc_openmpi' >> /root/.bash_profile
 source /root/.bash_profile
 
-# on all nodes
-#ssh <other nodes "mkdir -p /mnt/beeond/io500-app/build/pfind/"
-#scp /mnt/beeond/io500-app/build/pfind/pfind <>:/mnt/beeond/io500-app/build/pfind/
 }
 
 filesystem_root={{ beeond_mount }}
@@ -39,9 +42,43 @@ install_io500
 
 for line in `cat /etc/opt/oci-hpc/hostfile.rdma` ; do echo "$line slots=36" >> $filesystem_root/hostsfile.cn ; done ; cat $filesystem_root/hostsfile.cn
 
-mv $filesystem_root/io500-app/io500.sh $filesystem_root/io500-app/io500.sh.orig
-cp /home/opc/io500.sh $filesystem_root/io500-app/
-cp /home/opc/config-test3.ini $filesystem_root/io500-app/
+#mv $filesystem_root/io500-app/io500.sh $filesystem_root/io500-app/io500.sh.orig
+cp /home/opc/io500.sh $filesystem_root/io500-app/io500.sh.tf
+cp /home/opc/config-oci.ini $filesystem_root/io500-app/
+
+echo 'io500_info_submitter="PINKESH VALDRIA"
+io500_info_include-in-io500="true"
+io500_info_institution="Oracle Cloud Infrastructure"
+io500_info_system="BeeGFS on Oracle Cloud"
+io500_info_storage_install_date="2020-06-15"
+io500_info_storage_refresh_date="2020-06-15"
+io500_info_storage_vendor="Oracle Cloud Infrastructure"
+io500_info_filesystem_name="10-nodes-HPC-BeeGFS"
+io500_info_filesystem_type="BeeGFS"
+io500_info_filesystem_version="7.1.5"
+io500_info_client_nodes="270"
+io500_info_client_procs_per_node="12"
+io500_info_client_operating_system="Oracle Linux UEK"
+io500_info_client_operating_system_version="7.7"
+io500_info_client_kernel_version="4.14.35-1902.6.6.el7uek.x86_64"
+io500_info_md_nodes="270"
+io500_info_md_storage_devices="1"
+io500_info_md_storage_type="NVMe"
+io500_info_md_volatile_memory_capacity="384 GB"
+io500_info_md_storage_interface="NVMe"
+io500_info_md_network="Ethernet"
+io500_info_md_software_version="7.1.5"
+io500_info_md_operating_system_version="OracleLinuxUEK77"
+io500_info_ds_nodes="270"
+io500_info_ds_storage_devices="1"
+io500_info_ds_storage_type="NVMe"
+io500_info_ds_volatile_memory_capacity="384 GB"
+io500_info_ds_storage_interface="NVMe"
+io500_info_ds_network="Ethernet"
+io500_info_ds_software_version="7.1.5"
+io500_info_ds_operating_system_version="OracleLinuxUEK77"
+' > $filesystem_root/io500-app/system-information.txt
+
 
 else
  echo "filesystem directory not found"

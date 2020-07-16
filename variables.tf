@@ -39,15 +39,15 @@ variable "compartment_ocid" {
 }
 
 variable "vcn_subnet" {
-  default = "172.16.0.0/23"
+  default = "172.16.0.0/16"
 }
 
 variable "public_subnet" {
-  default = "172.16.0.0/24"
+  default = "172.16.16.0/24"
 }
 
 variable "private_subnet" {
-  default = "172.16.1.0/24"
+  default = "172.16.0.0/20"
 }
 
 variable "ssh_cidr" { 
@@ -88,7 +88,10 @@ variable "storage_node_count" {
   default = -1
 }
 
-
+# Install io500 perf benchmark binaries
+variable "io500" {
+  default = false
+}
 
 variable "bastion_shape" {
   default = "VM.Standard2.1"

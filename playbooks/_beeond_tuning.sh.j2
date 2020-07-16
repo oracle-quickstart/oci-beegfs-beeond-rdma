@@ -2,13 +2,6 @@
 
 set -x
 
-# all
-echo '
-net.ipv4.neigh.default.gc_thresh1=1100
-net.ipv4.neigh.default.gc_thresh2=2200
-net.ipv4.neigh.default.gc_thresh4=4400
-' >> /etc/sysctl.conf
-sysctl -p /etc/sysctl.conf
 
 
 mkdir -p /etc/beegfs/tuning
@@ -16,16 +9,20 @@ mkdir -p /etc/beegfs/tuning
 echo '
 connMaxInternodeNum          = 800
 tuneNumWorkers               = 128
+tuneTargetChooser            = randomrobin
 ' > /etc/beegfs/tuning/beegfs-meta.conf
 
+
+# tuneFileReadSize             = 256k
+# tuneFileWriteSize            = 256k
 
 echo '
 connMaxInternodeNum          = 800
 tuneNumWorkers               = 128
 tuneFileReadAheadSize        = 32m
-tuneFileReadAheadTriggerSize = 2m
-tuneFileReadSize             = 256k
-tuneFileWriteSize            = 256k
+tuneFileReadAheadTriggerSize = 1m
+tuneFileReadSize             = 1024k
+tuneFileWriteSize            = 1024k
 tuneWorkerBufSize            = 16m
 tuneBindToNumaZone           = 0
 ' > /etc/beegfs/tuning/beegfs-storage.conf
@@ -38,7 +35,10 @@ echo "$targetNumID" > /etc/beegfs/tuning/${type}-tunePreferredStorageFile.conf
 
 
 echo '
-connRDMABufSize              = 32768
+# bytes -  65536 32768
+connRDMABufSize              = 65536
+# https://www.beegfs.io/wiki/NativeInfinibandSupport - Mellanox Infiniband Tuning
+connRDMABufNum               = 22
 connMaxInternodeNum          = 800
 tuneNumWorkers               = 128
 #tunePreferredStorageFile     = /etc/beegfs/tuning/client-tunePreferredStorageFile.conf
@@ -93,3 +93,73 @@ tuneNumWorkers               = 128
 ##type="client"
 ##echo "$targetNumID" > /etc/beegfs/tuning/${type}-tunePreferredStorageFile.conf
 ##sed -i "s|tunePreferredStorageFile.*=.*|tunePreferredStorageFile          = /etc/beegfs/${type}-tunePreferredStorageFile.conf|g"  /etc/beegfs/beegfs-${type}.conf
+
+
+###
+# MIMIC Beegfs Storage Tuning for all BeeOND nodes
+###
+
+function tune_platform {
+
+# all
+#echo '
+#net.ipv4.neigh.default.gc_thresh1=1100
+#net.ipv4.neigh.default.gc_thresh2=2200
+#net.ipv4.neigh.default.gc_thresh4=4400
+#' >> /etc/sysctl.conf
+
+# network tuning
+echo "net.ipv4.tcp_timestamps = 0" >> /etc/sysctl.conf
+echo "net.ipv4.tcp_window_scaling = 1" >> /etc/sysctl.conf
+echo "net.ipv4.tcp_adv_win_scale=1" >> /etc/sysctl.conf
+echo "net.ipv4.tcp_low_latency=1" >> /etc/sysctl.conf
+echo "net.ipv4.tcp_sack = 1" >> /etc/sysctl.conf
+
+
+echo "net.core.wmem_max=16777216" >> /etc/sysctl.conf
+echo "net.core.rmem_max=16777216" >> /etc/sysctl.conf
+echo "net.core.wmem_default=16777216" >> /etc/sysctl.conf
+echo "net.core.rmem_default=16777216" >> /etc/sysctl.conf
+echo "net.core.optmem_max=16777216" >> /etc/sysctl.conf
+echo "net.core.netdev_max_backlog=27000" >> /etc/sysctl.conf
+
+echo "net.ipv4.tcp_rmem = 212992 87380 16777216" >> /etc/sysctl.conf
+echo "net.ipv4.tcp_wmem = 212992 65536 16777216" >> /etc/sysctl.conf
+
+/sbin/sysctl -p /etc/sysctl.conf
+
+echo 5 > /proc/sys/vm/dirty_background_ratio
+echo 20 > /proc/sys/vm/dirty_ratio
+echo 50 > /proc/sys/vm/vfs_cache_pressure
+echo 262144 > /proc/sys/vm/min_free_kbytes
+echo 1 > /proc/sys/vm/zone_reclaim_mode
+
+echo always > /sys/kernel/mm/transparent_hugepage/enabled
+echo always > /sys/kernel/mm/transparent_hugepage/defrag
+
+tuned-adm profile throughput-performance
+
+
+
+}
+
+function tune_disks {
+  devices=(nvme0n1)
+  for dev in "${devices[@]}"
+  do
+    echo deadline > /sys/block/${dev}/queue/scheduler
+    echo 128 > /sys/block/${dev}/queue/nr_requests
+    echo 128 > /sys/block/${dev}/queue/read_ahead_kb
+    echo 256 > /sys/block/${dev}/queue/max_sectors_kb
+  done
+}
+
+
+tune_platform
+
+# Fails for nvme .  fix it
+#tune_disks
+
+
+#Don't do NIC tuning, even for NIC0.
+

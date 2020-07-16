@@ -51,6 +51,7 @@ resource "oci_core_instance" "bastion" {
       use_beegfs_over_rdma = var.use_beegfs_over_rdma,
       metadata_node_count = var.metadata_node_count,
       storage_node_count = var.storage_node_count,
+      io500 = var.io500,
       })
 
     destination   = "/home/opc/playbooks/inventory"

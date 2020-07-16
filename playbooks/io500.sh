@@ -10,7 +10,7 @@ function setup_paths {
   io500_mdtest_cmd=$PWD/bin/mdtest
   io500_mdreal_cmd=$PWD/bin/md-real-io
   io500_mpirun="mpiexec"
-  io500_mpiargs="--allow-run-as-root -mca btl self -x UCX_TLS=rc,self,sm -x HCOLL_ENABLE_MCAST_ALL=0 -mca coll_hcoll_enable 0 -x UCX_IB_TRAFFIC_CLASS=105 -x UCX_IB_GID_INDEX=3 -n 30 -npernode 10 --hostfile /mnt/beeond/hostsfile.cn"
+  io500_mpiargs="--allow-run-as-root -mca btl self -x UCX_TLS=rc,self,sm -x HCOLL_ENABLE_MCAST_ALL=0 -mca coll_hcoll_enable 0 -x UCX_IB_TRAFFIC_CLASS=105 -x UCX_IB_GID_INDEX=3 -n 3240 -npernode 12 --hostfile /mnt/beeond/hostsfile.cn"
 }
 
 function setup_directories {
@@ -40,12 +40,12 @@ function setup_directories {
   mkdir -p $workdir-{scr,app}/{ior_easy,ior_hard,mdt_easy,mdt_hard}
 
 # for ior_easy.
-beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=2m --numtargets=4 $PWD/$workdir-scr/ior_easy
-beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=2m --numtargets=4 $PWD/$workdir-app/ior_easy
+beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=1m --numtargets=4 $PWD/$workdir-scr/ior_easy
+beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=1m --numtargets=4 $PWD/$workdir-app/ior_easy
 
 # stripe across all OSTs for ior_hard, 256k chunksize
-beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=2m --numtargets=3 $PWD/$workdir-scr/ior_hard
-beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=2m --numtargets=3 $PWD/$workdir-app/ior_hard
+beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=1m --numtargets=270 $PWD/$workdir-scr/ior_hard
+beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=1m --numtargets=270 $PWD/$workdir-app/ior_hard
 
 # for ior_easy.
 ##beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=1m --numtargets=4 $PWD/$workdir-scr/ior_easy
@@ -171,7 +171,7 @@ function main {
   setup_mdreal   # optional
   run_benchmarks
 
-  if [[ -s "system-information.txt" ]]; then
+  if [[ ! -s "system-information.txt" ]]; then
     echo "Warning: please create a system-information.txt description by"
     echo "copying the information from https://vi4io.org/io500-info-creator/"
   else

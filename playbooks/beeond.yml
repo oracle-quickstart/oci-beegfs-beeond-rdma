@@ -1,5 +1,7 @@
 - hosts: compute
   tasks:
+  - name: execute client_rebuild_prep.sh
+    command: bash -c "sudo yum-config-manager --save --setopt=intelpython.skip_if_unavailable=true"
   - name: Repository
     become: true
     yum_repository:
@@ -56,21 +58,6 @@
   - name: Run BeeOND script on first compute node only
     command: bash -c "chmod +x /home/opc/*.sh ; sudo /home/opc/beeond.sh "
     run_once: true
-  - name: create io500_install.sh file
-    template:
-      src: _io500_install.sh.j2
-      dest: /home/opc/io500_install.sh
-  - name: copy io500.sh file
-    template:
-      src: io500.sh
-      dest: /home/opc/io500.sh
-    run_once: true
-  - name: copy io500 config*ini file
-    template:
-      src: config-test3.ini
-      dest: /home/opc/config-test3.ini
-    run_once: true
-  - name: Install io500 benchmark on first compute node only
-    command: bash -c "chmod +x /home/opc/*.sh ; sudo /home/opc/io500_install.sh "
-    run_once: true
 
+- import_playbook: io500_install.yml
+  when: io500|bool

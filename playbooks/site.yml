@@ -131,7 +131,7 @@
       path: /mnt/localdisk/
       src: /dev/nvme0n1p1
       fstype: xfs
-      opts: defaults,noatime
+      opts: defaults,noatime,inode64
       state: mounted
 
 - import_playbook: beeond.yml

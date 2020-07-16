@@ -22,3 +22,5 @@ storage_node_count=${storage_node_count}
 nodefile_rdma=/home/opc/nodefile.rdma
 nodefile_tcp=/home/opc/nodefile.tcp
 beeond_mount=/mnt/beeond
+io500=${io500}
+
