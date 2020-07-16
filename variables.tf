@@ -1,15 +1,9 @@
 variable "tenancy_ocid" {
 }
 
-#variable "user_ocid" {
-#}
 variable "region" {
 }
 
-#variable "private_key_path" {
-#}
-#variable "fingerprint" {
-#}
 variable "image" {
   default = "ocid1.image.oc1..aaaaaaaa5yxem7wzie34hi5km4qm2t754tsfxrjuefyjivebrxjad4jcj5oa"
 }

@@ -1,0 +1,257 @@
+title: HPC BeeGFS BeeOND Filesystem input variables
+description: Automated HPC BeeGFS BeeOND Filesystem deployment
+schemaVersion: 1.0.0
+version: "20200716"
+locale: "en"
+
+groupings:
+- title: "General cluster values"
+  variables: 
+  - ${ad}
+  - ${ssh_key}
+  - ${use_custom_name}
+  - ${cluster_name}
+- title: "BeeGFS BeeOND Filesystem values"
+  variables:
+  - ${filesystem}
+  - ${use_beegfs_over_rdma}
+  - ${shape}
+  - ${node_count}
+  - ${boot_volume_size}
+  - ${use_marketplace_image}
+  - ${image}
+  - ${metadata_node_count}
+  - ${storage_node_count}
+  - ${io500}
+- title: "Bastion options"
+  variables: 
+  - ${bastion_ad}
+  - ${bastion_shape}
+  - ${use_standard_image} 
+  - ${custom_bastion_image}
+- title: "Network options"
+  variables: 
+  - ${use_existing_vcn}
+  - ${vcn_id}
+  - ${bastion_subnet_id}
+  - ${cluster_subnet_id}
+  - ${vcn_subnet}
+  - ${private_subnet}
+  - ${public_subnet}
+  - ${ssh_cidr}
+- title: "Pre-Defined"
+  variables:
+  - ${region}
+  - ${compartment_ocid}
+  - ${tenancy_ocid}
+  - ${user_ocid}
+  - ${fingerprint} 
+  - ${bastion_image}
+  - ${private_key_path}
+  visible: false
+
+variables:
+  ad:
+    type: oci:identity:availabilitydomain:name
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+    visible: complexExpression
+    required: true
+    description: "Availability Domain where BM.HPC2.36 shape is available"
+    title: "Availability Domain"
+  bastion_ad:
+    type: oci:identity:availabilitydomain:name
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+    visible: complexExpression
+    required: true
+    description: "Availability Domain for bastion host"
+    title: "Availability Domain"
+  use_custom_name: 
+    type: boolean
+    title: "use custom cluster name"
+    description: "Use custom name for the cluster" 
+    required: true
+    default: false
+  cluster_name: 
+    title: "Name of the cluster" 
+    description: "Custom cluster name"
+    type: string
+    visible: 
+      and: 
+        - ${use_custom_name}
+  use_standard_image: 
+    type: boolean
+    title: "use standard bastion image"
+    description: "Use standard bastion image, otherwise provide custom image OCID" 
+    required: true
+    default: true
+  custom_bastion_image: 
+    title: "Bastion Image ID" 
+    description: "Custom image ID for bastion nodes"
+    type: oci:core:image:id
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+    visible: 
+      not: 
+        - ${use_standard_image}
+  use_marketplace_image: 
+    type: boolean
+    title: "use marketplace image"
+    description: "Use marketplace image, otherwise provide custom image OCID" 
+    required: true
+    default: true
+  image: 
+    title: "Image ID" 
+    description: "Custom image ID for compute nodes"
+    type: oci:core:image:id
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+    visible: 
+      not: 
+        - ${use_marketplace_image}
+  use_existing_vcn: 
+    type: boolean
+    title: "Use Existing VCN"
+    description: "Use existing VCN or create new one"
+    default: false
+    required: true
+  vcn_id: 
+    type: oci:core:vcn:id
+    visible:
+      and:
+        - ${use_existing_vcn}
+    title: "Existing network"
+    default: ''
+    required: true
+    dependsOn: 
+      compartmentId: ${compartment_ocid}
+  bastion_subnet_id: 
+    type: oci:core:subnet:id
+    dependsOn:
+      vcnId: ${vcn_id}
+      compartmentId: ${compartment_ocid}
+    default: ''
+    required: true
+    title: "Exiting subnet for Bastion host" 
+    visible:
+      and:
+        - ${use_existing_vcn}
+  cluster_subnet_id: 
+    type: oci:core:subnet:id
+    dependsOn:
+      vcnId: ${vcn_id}
+      compartmentId: ${compartment_ocid}
+    default: ''
+    required: true
+    title: "Exiting subnet for Cluster network" 
+    visible:
+      and:
+        - ${use_existing_vcn}
+  vcn_subnet: 
+    type: string
+    title: "VCN IP range"
+    description: "VCN subnet" 
+    default: "172.16.0.0/16"
+    required: true
+    visible:
+      not:
+        - ${use_existing_vcn}
+  bastion_shape:
+    type: oci:core:instanceshape:name
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+      availabilityDomainName: ${ad}
+    required: true
+    title: "Bastion Host shape"
+  public_subnet: 
+    type: string
+    title: "Public subnet IP range"
+    default: "172.16.16.0/24"
+    description: "Must be within VCN subnet" 
+    required: true
+    visible:
+      not:
+        - ${use_existing_vcn}
+  private_subnet: 
+    type: string
+    default: "172.16.0.0/20"
+    title: "Private subnet IP range"
+    description: "Must be within VCN subnet" 
+    required: true
+    visible:
+      not:
+        - ${use_existing_vcn}
+  private: 
+    type: boolean
+    default: true
+    title: "Private subnet deployment" 
+    required: true
+    visible: false
+  shape:
+    type: enum
+    enum:
+    - "BM.HPC2.36"
+    title: "Shape of the Compute Nodes"
+    required: true
+  ssh_key: 
+    type: string
+    title: "Public SSH key" 
+    required: true
+  ssh_cidr: 
+    type: string
+    title: "Public CIDR for SSH access" 
+    required: true
+  node_count: 
+    type: integer
+    required: true
+    minimum: 2
+    title: "Number of Compute Instances"
+    description: "Number of nodes running BeeGFS client service. In other words, will have filesystem mounted."
+    default: 2
+  boot_volume_size: 
+    type: integer
+    required: true
+    minimum: 50
+    title: "Size of the boot volume in GB"
+    default: 50
+  filesystem:
+    title: "Filesystem"
+    description: "Filesystem"
+    type: string
+    visible: false
+    default: beegfs
+  use_beegfs_over_rdma:
+    type: boolean
+    title: "Use Beegfs over RDMA"
+    description: "Use Beegfs over RDMA"
+    required: true
+    default: true
+    visible: false
+  metadata_node_count:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: ${node_count}
+    title: "Metadata Node Count"
+    description: "Number of nodes running Metadata service. Recommend to run on all nodes of the cluster"
+    default: ${node_count}
+    visible: true
+  storage_node_count:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: ${node_count}
+    title: "Storage Node Count"
+    description: "Number of nodes running Storage service. Recommend to run on all nodes of the cluster"
+    default: ${node_count}
+    visible: true
+  io500:
+    type: boolean
+    title: "Install io500 binaries"
+    description: "Install io500 performance benchmark tool binaries"
+    required: true
+    default: false
+    visible: false
+
+
