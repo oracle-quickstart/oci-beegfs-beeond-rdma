@@ -43,9 +43,13 @@ Now, you'll want a local copy of this repo.  You can make that with the commands
     ls
 
 ## Customize the template 
-Create a terraform.tfvars file and set values as per your needs.  We recommend to use terraform.tfvars to override values in variables.tf file.   Update values based on your AD,  # of nodes in a cluster, etc.    By default,  **use_beegfs_over_rdma is set to true** in variables.tf, so RDMA network will be used for BeeOND filesystem traffic.  
+Create a terraform.tfvars file and set values as per your needs.  We recommend to use terraform.tfvars to override values in variables.tf file.   Update values based on your AD,  # of nodes in a cluster, etc.    
 
+- By default,  **use_beegfs_over_rdma is set to true** in variables.tf, so RDMA network will be used for BeeOND filesystem traffic.  
+- Set **use_marketplace_image=true** in your terraform.tfvars file as shown below, To use OCI  HPC Cluster Network functionality, you need to use a custom marketplace image created by OCI HPC team.  The custom marketplace image is built using Oracle Linux UEK 7.6 image with OFED4.6.x drivers for 100Gbps RDMA cluster network and OCI-HPC utils.  We recommend using OS image using Oracle Linux UEK,  however if you need CentOS+OCI  HPC Cluster Network functionality, then reach out to OCI HPC team.  
+- The variable,  **use_standard_image** only applies to what image to use for bastion node and doesn't apply for hpc node image.  If you plan to use a custom image for bastion, then set **use_standard_image** to false and set the **custom_bastion_image** variable to an Image OCID value. (ocid1.image.oc1.xxxxxxxxxx) 
 
+```
            cat terraform.tfvars
            ad="kWVD:UK-LONDON-1-AD-1"
            bastion_ad="kWVD:UK-LONDON-1-AD-1"
@@ -54,11 +58,13 @@ Create a terraform.tfvars file and set values as per your needs.  We recommend t
            use_existing_vcn=false
            use_custom_name=false
            use_marketplace_image=true
-           use_standard_image=true
            metadata_node_count=2
            storage_node_count=2
            io500=false
-           
+           use_standard_image=true
+
+```
+
 In above example,  on a 3 node (**node_count=3**) BeeOND cluster, I am asking for 2 Metadata servers (**metadata_node_count=2**) instead of default of 1.  Also I am asking for only 2 Storage servers (**storage_node_count=2**) instead of the default of creating Storage servers on all nodes of the BeeOND cluster (In this example: 3)
 
 
