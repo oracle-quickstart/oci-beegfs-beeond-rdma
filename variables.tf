@@ -26,7 +26,7 @@ variable "ad" {
 variable "bastion_ad" {
 }
 
-variable "ssh_key" {
+variable "ssh_public_key" {
 }
 
 variable "compartment_ocid" {

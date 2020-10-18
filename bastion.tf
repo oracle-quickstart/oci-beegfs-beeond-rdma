@@ -16,7 +16,7 @@ resource "oci_core_instance" "bastion" {
   shape               = var.bastion_shape
   display_name        = "${local.cluster_name}-bastion"
   metadata = {
-    ssh_authorized_keys = "${var.ssh_key}\n${tls_private_key.ssh.public_key_openssh}"
+    ssh_authorized_keys = "${var.ssh_public_key}\n${tls_private_key.ssh.public_key_openssh}"
     user_data           = base64encode(data.template_file.bastion_config.rendered)
   }
   source_details {
