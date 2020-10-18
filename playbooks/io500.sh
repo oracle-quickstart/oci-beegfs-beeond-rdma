@@ -36,31 +36,33 @@ function setup_directories {
   io500_result_dir=$resultdir-scr
 
   mkdir -p $workdir-{scr,app} $resultdir-{scr,app}
-  
-  mkdir -p $workdir-{scr,app}/{ior_easy,ior_hard,mdt_easy,mdt_hard}
 
-# for ior_easy.
-beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=1m --numtargets=4 $PWD/$workdir-scr/ior_easy
-beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=1m --numtargets=4 $PWD/$workdir-app/ior_easy
+  # The "app" uses hypen and the old scr uses underscore.
+  mkdir -p $workdir-{scr}/{ior_easy,ior_hard,mdt_easy,mdt_hard}
+  mkdir -p $workdir-{app}/{ior-easy,ior-hard,mdt-easy,mdt-hard}
 
-# stripe across all OSTs for ior_hard, 256k chunksize
-beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=1m --numtargets=270 $PWD/$workdir-scr/ior_hard
-beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=1m --numtargets=270 $PWD/$workdir-app/ior_hard
+  # for ior_easy.
+  beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=1m --numtargets=4 $PWD/$workdir-scr/ior_easy
+  beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=1m --numtargets=4 $PWD/$workdir-app/ior-easy
 
-# for ior_easy.
-##beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=1m --numtargets=4 $PWD/$workdir-scr/ior_easy
-##beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=1m --numtargets=4 $PWD/$workdir-app/ior_easy
+  # stripe across all OSTs for ior_hard, 256k chunksize
+  beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=1m --numtargets=270 $PWD/$workdir-scr/ior_hard
+  beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=1m --numtargets=270 $PWD/$workdir-app/ior-hard
 
-# stripe across all OSTs for ior_hard, 256k chunksize
-#beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=256k --numtargets=3 $PWD/$workdir-scr/ior_hard
-#beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=256k --numtargets=3 $PWD/$workdir-app/ior_hard
+  # for ior_easy.
+  ##beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=1m --numtargets=4 $PWD/$workdir-scr/ior_easy
+  ##beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=1m --numtargets=4 $PWD/$workdir-app/ior-easy
 
-# turn off striping and use small chunks for mdtest
-beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=64k --numtargets=1 $PWD/$workdir-scr/mdt_easy
-beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=64k --numtargets=1 $PWD/$workdir-scr/mdt_hard
+  # stripe across all OSTs for ior_hard, 256k chunksize
+  #beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=256k --numtargets=3 $PWD/$workdir-scr/ior_hard
+  #beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=256k --numtargets=3 $PWD/$workdir-app/ior-hard
 
-beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=64k --numtargets=1 $PWD/$workdir-app/mdt_easy
-beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=64k --numtargets=1 $PWD/$workdir-app/mdt_hard
+  # turn off striping and use small chunks for mdtest
+  beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=64k --numtargets=1 $PWD/$workdir-scr/mdt_easy
+  beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=64k --numtargets=1 $PWD/$workdir-scr/mdt_hard
+
+  beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=64k --numtargets=1 $PWD/$workdir-app/mdt-easy
+  beegfs-ctl --mount=/mnt/beeond --setpattern --chunksize=64k --numtargets=1 $PWD/$workdir-app/mdt-hard
 
 
 }
