@@ -6,6 +6,8 @@ Deploy BeeGFS BeeOND (BeeGFS ON Demand) on Oracle Cloud Infrastructure HPC 100Gb
 - By default, all nodes will have a BeeGFS BeeOND Storage service & BeeOND client service running.  The first node, will also run Management and Metadata service, in addition to storage and client service.   You can override the default behavior using Terraform variables, see below [Customize-the-template](https://github.com/oracle-quickstart/oci-beegfs-beeond-rdma#customize-the-template) section. 
 - By default, the filesystem is designed to use 100Gbps RDMA for filesystem traffic along with your HPC application traffic.  If we want to use 100Gbps RDMA only for your compute application traffic, then you can configure BeeOND to use 25Gbps network on the HPC nodes.      
 
+## BeeGFS BeeOND (ON-Demand) License
+BeeGFS/BeeOND requires license, reach out to [thinkparQ](https://thinkparq.com/) for license details. This github code is open source and its users responsibility to get the required license.
 
 ## What is BeeGFS BeeOND (ON-Demand)
 ![](./images/What_is_BeeOND.png)
