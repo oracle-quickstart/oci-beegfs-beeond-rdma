@@ -78,4 +78,19 @@ Deploy using standard Terraform commands
         terraform plan
         terraform apply 
 
+## Contributing
+
+This project welcomes contributions from the community. Before submitting a pull request, please [review our contribution guide](./CONTRIBUTING.md)
+
+## Security
+
+Please consult the [security guide](./SECURITY.md) for our responsible security vulnerability disclosure process
+
+## License
+
+Copyright (c) 2023 Oracle and/or its affiliates.
+
+Released under the Apache License Version 2.0, as shown at
+[<https://oss.oracle.com/licenses/upl/>](http://www.apache.org/licenses/).
+
 ![](./images/TF-apply.PNG)
