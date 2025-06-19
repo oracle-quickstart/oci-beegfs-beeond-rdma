@@ -91,6 +91,6 @@ Please consult the [security guide](./SECURITY.md) for our responsible security 
 Copyright (c) 2023 Oracle and/or its affiliates.
 
 Released under the Apache License Version 2.0, as shown at
-[<https://oss.oracle.com/licenses/upl/>](http://www.apache.org/licenses/).
+<http://www.apache.org/licenses/>.
 
 ![](./images/TF-apply.PNG)
